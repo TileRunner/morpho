@@ -1,16 +1,17 @@
 {
   "files": {
-    "main.css": "/morpho/static/css/main.073c9b0a.css",
-    "main.js": "/morpho/static/js/main.94594ed2.js",
-    "static/js/787.7af9ba7f.chunk.js": "/morpho/static/js/787.7af9ba7f.chunk.js",
-    "static/media/logo.svg": "/morpho/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "main.css": "/morpho/static/css/main.32d7094b.css",
+    "main.js": "/morpho/static/js/main.33c4875b.js",
+    "static/media/MorphoButterfly.png": "/morpho/static/media/MorphoButterfly.116161befe8d065ed0e6.png",
+    "static/media/MorphoCaterpillar.png": "/morpho/static/media/MorphoCaterpillar.a18bb4ff8007ef7f3e37.png",
+    "static/media/MorphoCocoon.png": "/morpho/static/media/MorphoCocoon.21f111323d8d00aa4e11.png",
+    "static/media/my-logo.svg": "/morpho/static/media/my-logo.9767585576bdac9630f53c636fda52e3.svg",
     "index.html": "/morpho/index.html",
-    "main.073c9b0a.css.map": "/morpho/static/css/main.073c9b0a.css.map",
-    "main.94594ed2.js.map": "/morpho/static/js/main.94594ed2.js.map",
-    "787.7af9ba7f.chunk.js.map": "/morpho/static/js/787.7af9ba7f.chunk.js.map"
+    "main.32d7094b.css.map": "/morpho/static/css/main.32d7094b.css.map",
+    "main.33c4875b.js.map": "/morpho/static/js/main.33c4875b.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.94594ed2.js"
+    "static/css/main.32d7094b.css",
+    "static/js/main.33c4875b.js"
   ]
 }
