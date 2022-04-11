@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { BrowserView, MobileOnlyView } from 'react-device-detect';
 import { countSwaps, isWordValid } from './word-functions';
 
-const Morpho = ({setWhereto}) => {
+const Morpho = ({setWhereTo}) => {
     const [starting, setStarting] = useState(true);
     const [numRows, setNumRows] = useState(6);
     const [numCols, setNumCols] = useState(5);
@@ -442,7 +442,7 @@ const Morpho = ({setWhereto}) => {
         <div className="trBackground">
             <div className="trTitle">
                 Morpho
-                <button className="trButton" onClick={() => {setWhereto('home');}}>
+                <button className="trButton" onClick={() => {setWhereTo('home');}}>
                     <i className="material-icons" data-toggle="tooltip" title="Home">home</i>
                 </button>
             </div>
