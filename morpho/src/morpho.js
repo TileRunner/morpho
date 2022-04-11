@@ -442,7 +442,7 @@ const Morpho = ({setWhereto}) => {
         <div className="trBackground">
             <div className="trTitle">
                 Morpho
-                <button className="trButton" onClick={() => {setWhereto('menu');}}>
+                <button className="trButton" onClick={() => {setWhereto('home');}}>
                     <i className="material-icons" data-toggle="tooltip" title="Home">home</i>
                 </button>
             </div>
