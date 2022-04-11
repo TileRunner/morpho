@@ -1,4 +1,4 @@
-import mylogo from './my-logo.svg';
+import mylogo from './MorphoButterfly.png';
 import './App.css';
 import './morpho.css';
 import './tr.css';
