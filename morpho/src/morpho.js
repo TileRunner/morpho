@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { BrowserView, MobileOnlyView } from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 import { countSwaps, isWordValid } from './word-functions';
 
 const Morpho = ({setWhereTo}) => {
+    const lenArray = isMobile ? [3,4,5] : [3,4,5,6,7,8];
+    const [guide, setGuide] = useState(false);
     const [starting, setStarting] = useState(true);
     const [numRows, setNumRows] = useState(6);
     const [numCols, setNumCols] = useState(5);
@@ -11,7 +13,6 @@ const Morpho = ({setWhereTo}) => {
     const cssPresetLetter = "morphoCellStatic";
     const cssNoLetter = "morphoCellNoLetter";
     const cssSelectedCell = " morphoCellSelected";
-    const cssLarva = "morphoCellLarva";
     const cssCocoon = "morphoCellCocoon";
     const cssButterfly = "morphoCellButterfly";
     const [loading, setLoading] = useState(true);
@@ -22,7 +23,7 @@ const Morpho = ({setWhereTo}) => {
     const [firstWord, setFirstWord] = useState('');
     const [lastWord, setLastWord] = useState('');
     const [board, setBoard] = useState([]);
-    const [selected, setSelected] = useState({row:1, col:0}); // Natural place to start entering letters
+    const [selected, setSelected] = useState({row:1}); // Natural start row
 
     const callForPuzzle = async(wordLength) => {
         let data = {};
@@ -74,7 +75,7 @@ const Morpho = ({setWhereTo}) => {
             setNumCols(numberOfCols);
             setNumRows(numberOfRows);
             setBoard(rowArray);
-            setSelected({row:1,col:0});
+            setSelected({row:1});
             setLoading(false);
         } else {
             alert(`Problem generating puzzle: ${data.notes}\nBest to click Home then rechoose Morpho.`);
@@ -83,12 +84,12 @@ const Morpho = ({setWhereTo}) => {
 
     const handleSelection = (rowIndex, colIndex) => {
         if (checking) {
-            return; // No modes while checking solution
+            return; // No moves while checking solution
         }
         if (puzzleSolved) {
             return; // Puzzle already solved
         }
-        if (colIndex < 0 || colIndex >= numCols) {
+        if (colIndex < 0 || colIndex >= numCols) { // I don't think this can happen
             return;
         }
         if (rowIndex === numRows - 1 && selected.row > 0 && selected.row < numRows - 1) {
@@ -104,7 +105,7 @@ const Morpho = ({setWhereTo}) => {
                 newBoard[selected.row].colArray[ci].className = cssCocoon;               
             }
             newBoard[selected.row].filledin = true;
-            let newSelected = {row: selected.row + 1, col: 0};
+            let newSelected = {row: selected.row + 1};
             if (newSelected.row >= numRows - 1) {
                 newSelected.row = 1;
             }
@@ -114,192 +115,12 @@ const Morpho = ({setWhereTo}) => {
                 // All letters are filled in
                 setFilledin(true);
             }
-                return;
-        }
-        if (rowIndex < 1 || rowIndex >= numRows - 1) {
             return;
         }
-        setSelected({row:rowIndex,col:colIndex});
-    }
-
-    const handleKeyDown = (event) => {
-        if (event.key === "F12") {return;}
-        event.preventDefault();
-        if (checking) {
-            return; // No modes while checking solution
-        }
-        if (puzzleSolved) {
-            return; // Puzzle already solved
-        }
-        handleInputLetter(event.key);
-    }
-
-    const copyDownLetter = () => {
-        if (checking) {
-            return; // No modes while checking solution
-        }
-        if (puzzleSolved) {
-            return; // Puzzle already solved
-        }
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        if (rowIndex < 1 || rowIndex >= numRows - 1) {
+        if (rowIndex < 1 || rowIndex >= numRows - 1) { // I don't think this can happen
             return;
         }
-        if (colIndex < 0 || rowIndex >= numCols) {
-            return;
-        }
-        handleInputLetter(board[rowIndex-1].colArray[colIndex].letter);
-    }
-    
-    const copyUpLetter = () => {
-        if (checking) {
-            return; // No modes while checking solution
-        }
-        if (puzzleSolved) {
-            return; // Puzzle already solved
-        }
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        if (rowIndex < 1 || rowIndex >= numRows - 1) {
-            return;
-        }
-        if (colIndex < 0 || rowIndex >= numCols) {
-            return;
-        }
-        handleInputLetter(board[numRows-1].colArray[colIndex].letter);
-    }
-    
-    const handleInputLetter = (letter) => {
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        if (rowIndex < 1 || rowIndex >= numRows - 1) {
-            return;
-        }
-        if (colIndex < 0 || rowIndex >= numCols) {
-            return;
-        }
-        if (filledin && letter === "Enter") {
-            checkSolution();
-            return;
-        }
-        let lettertest = /^[A-Za-z\?]$/; // single letter or question mark key pressed
-        let moveDirection = "r"; // Default
-        if (letter === "Backspace") {
-            letter = "?";
-            moveDirection = "l";
-        }
-        if (letter === "Delete") {
-            letter = "?";
-            moveDirection = "";
-        }
-        if (letter === "ArrowUp") {
-            letter = board[rowIndex].colArray[colIndex].letter;
-            moveDirection = "u";
-        }
-        if (letter === "ArrowDown") {
-            letter = board[rowIndex].colArray[colIndex].letter;
-            moveDirection = "d";
-        }
-        if (letter === "ArrowLeft") {
-            letter = board[rowIndex].colArray[colIndex].letter;
-            moveDirection = "l";
-        }
-        if (letter === "ArrowRight") {
-            letter = board[rowIndex].colArray[colIndex].letter;
-            moveDirection = "r";
-        }
-        if (letter.match(lettertest)) {
-            letter = letter.toUpperCase();
-        } else {
-            return;
-        }
-        if (letter === "") {
-            return;
-        }
-        let rowArray = JSON.parse(JSON.stringify(board));
-        rowArray[rowIndex].colArray[colIndex].letter = letter;
-        rowArray[rowIndex].filledin = (rowArray[rowIndex].colArray.filter((cell) => {return cell.letter === "?";}).length === 0);
-        for (let ci = 0; ci < numCols; ci++) {
-            if (rowArray[rowIndex].colArray[ci].letter === "?") {
-                rowArray[rowIndex].colArray[ci].className = cssNoLetter;
-            } else {
-                rowArray[rowIndex].colArray[ci].className = rowArray[rowIndex].filledin ? cssCocoon : cssLarva;
-            }
-        }
-        if (moveDirection === "u") {
-            moveUp();
-        }
-        if (moveDirection === "d") {
-            moveDown();
-        }
-        if (moveDirection === "r") {
-            moveRight();
-        }
-        if (moveDirection === "l") {
-            moveLeft();
-        }
-        if (rowArray.filter(r => {return !r.filledin;}).length === 0) {
-            // All letters are filled in
-            setFilledin(true);
-        }
-        setBoard(rowArray);
-    }
-
-    const moveUp = () => {
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        let newSelected = {row:rowIndex,col:colIndex};
-        if (rowIndex - 1 > 0) {
-            newSelected.row = rowIndex - 1;
-            newSelected.col = colIndex;
-        } else {
-            newSelected.row = numRows - 2;
-            newSelected.col = colIndex - 1 > -1 ? colIndex - 1 : numCols - 1;
-        }
-        setSelected(newSelected);
-    }
-
-    const moveDown = () => {
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        let newSelected = {row:rowIndex,col:colIndex};
-        if (rowIndex + 1 < numRows - 1) {
-            newSelected.row = rowIndex + 1;
-            newSelected.col = colIndex;
-        } else {
-            newSelected.row = 1;
-            newSelected.col = colIndex + 1 < numCols ? colIndex + 1 : 0;
-        }
-        setSelected(newSelected);
-    }
-
-    const moveRight = () => {
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        let newSelected = {row:1,col:0};
-        if (colIndex + 1 < numCols) {
-            newSelected.row = rowIndex;
-            newSelected.col = colIndex + 1;
-        } else if (rowIndex + 1 < numRows - 1) {
-            newSelected.row = rowIndex + 1;
-            newSelected.col = 0;
-        }
-        setSelected(newSelected);
-    }
-
-    const moveLeft = () => {
-        let rowIndex = selected.row;
-        let colIndex = selected.col;
-        let newSelected = {row:numRows-2,col:numCols-1};
-        if (colIndex - 1 > -1) {
-            newSelected.row = rowIndex;
-            newSelected.col = colIndex - 1;
-        } else if (rowIndex - 1 > 0) {
-            newSelected.row = rowIndex - 1;
-            newSelected.col = numCols - 1;
-        }
-        setSelected(newSelected);
+        setSelected({row:rowIndex});
     }
 
     const toggleShowSolution = () => {
@@ -329,43 +150,32 @@ const Morpho = ({setWhereTo}) => {
         setPuzzleSolved(result);
     }
 
-    const promptForPuzzleGeneration = <div>
-        <MobileOnlyView>
-            <button key="genMobile" className="trButton" onClick={() => {
-                setInitialBoard(nextNumCols);
-            } }>
-                {nextNumCols} LETTER PUZZLE
+    const promptForPuzzleGeneration = <div className='gameStartDiv'>
+        {lenArray.map((l) => (
+            <button className={`${l === nextNumCols ? 'lenSelected' : 'lenUnselected'}`} key={`selLen${l}`}
+            onClick={() => {setNextNumCols(l);}}>{l}</button>
+        ))}
+        <div>
+            <button className="trButton" onClick={() => {setInitialBoard(nextNumCols);}}>
+                START PUZZLE
             </button>
-            {nextNumCols < 5 && <button key="longerPuzzleMobile" className="morphoPuzzleSizeKey" onClick={() => {
-                setNextNumCols(nextNumCols + 1);
-            } }>+</button>}
-            {nextNumCols > 3 && <button key="shorterPuzzleMobile" className="morphoPuzzleSizeKey" onClick={() => {
-                setNextNumCols(nextNumCols - 1);
-            } }>-</button>}
-        </MobileOnlyView>
-        <BrowserView>
-            <button key="genBrowser" className="trButton" onClick={() => {
-                setInitialBoard(nextNumCols);
-            } }>
-                {nextNumCols} LETTER PUZZLE
-            </button>
-            {nextNumCols < 8 && <button key="longerPuzzle" className="morphoPuzzleSizeKey" onClick={() => {
-                setNextNumCols(nextNumCols + 1);
-            } }>+</button>}
-            {nextNumCols > 3 && <button key="shorterPuzzle" className="morphoPuzzleSizeKey" onClick={() => {
-                setNextNumCols(nextNumCols - 1);
-            } }>-</button>}
-        </BrowserView>
+        </div>
     </div>;
 
+    const showGuide = <ul className='guide'>
+        <li>Change one letter at a time to get from {firstWord} to {lastWord}.</li>
+        <li>Each interim word must be a valid word.</li>
+        <li>Click a letter on the bottom row to use it as the swap on the selected row.</li>
+    </ul>;
+
     const renderThePuzzle = <div key="showboard" className={puzzleSolved ? `morphoSolvedDiv l${numCols}` : "morphoDiv"}>
-        <table onKeyDown={(e) => { handleKeyDown(e); } } tabIndex={-1}><tbody>
+        <table><tbody>
             {board.map((boardRow, rowIndex) => (
                 <tr key={`BoardRow.${rowIndex}`}>
                     {boardRow.colArray.map((cell, colIndex) => (
                         <td key={`BoardCell.${rowIndex}.${colIndex}`}
                             onClick={() => { handleSelection(rowIndex, colIndex); } }
-                            className={`col morphoCell ${showSolution ? cssPresetLetter : puzzleSolved ? cssButterfly : cell.className + (rowIndex === selected.row && colIndex === selected.col ? cssSelectedCell : "")}`}>
+                            className={`col morphoCell ${showSolution ? cssPresetLetter : puzzleSolved ? cssButterfly : cell.className + (rowIndex === selected.row ? cssSelectedCell : "")}`}>
                             {showSolution ?
                                 <span key={`BoardCellS.${rowIndex}.${colIndex}`}>{cell.solution}</span>
                                 :
@@ -376,81 +186,39 @@ const Morpho = ({setWhereTo}) => {
             ))}
         </tbody></table>
         <div className="trParagraph">
-            {!loading && !checking && !puzzleSolved && <div>
-                <div className="morphoKeyboard">
-                    {/* <div className="morphoKeyrow1">
-            <button key="keyQ" onClick={() => {handleInputLetter('Q');}} className="morphoKey">Q</button>
-            <button key="keyW" onClick={() => {handleInputLetter('W');}} className="morphoKey">W</button>
-            <button key="keyE" onClick={() => {handleInputLetter('E');}} className="morphoKey">E</button>
-            <button key="keyR" onClick={() => {handleInputLetter('R');}} className="morphoKey">R</button>
-            <button key="keyT" onClick={() => {handleInputLetter('T');}} className="morphoKey">T</button>
-            <button key="keyY" onClick={() => {handleInputLetter('Y');}} className="morphoKey">Y</button>
-            <button key="keyU" onClick={() => {handleInputLetter('U');}} className="morphoKey">U</button>
-            <button key="keyI" onClick={() => {handleInputLetter('I');}} className="morphoKey">I</button>
-            <button key="keyO" onClick={() => {handleInputLetter('O');}} className="morphoKey">O</button>
-            <button key="keyP" onClick={() => {handleInputLetter('P');}} className="morphoKey">P</button>
-        </div>
-        <div className="morphoKeyrow2">
-            <button key="keyA" onClick={() => {handleInputLetter('A');}} className="morphoKey">A</button>
-            <button key="keyS" onClick={() => {handleInputLetter('S');}} className="morphoKey">S</button>
-            <button key="keyD" onClick={() => {handleInputLetter('D');}} className="morphoKey">D</button>
-            <button key="keyF" onClick={() => {handleInputLetter('F');}} className="morphoKey">F</button>
-            <button key="keyG" onClick={() => {handleInputLetter('G');}} className="morphoKey">G</button>
-            <button key="keyH" onClick={() => {handleInputLetter('H');}} className="morphoKey">H</button>
-            <button key="keyJ" onClick={() => {handleInputLetter('J');}} className="morphoKey">J</button>
-            <button key="keyK" onClick={() => {handleInputLetter('K');}} className="morphoKey">K</button>
-            <button key="keyL" onClick={() => {handleInputLetter('L');}} className="morphoKey">L</button>
-        </div>
-        <div className="morphoKeyrow3">
-            <button key="keyZ" onClick={() => {handleInputLetter('Z');}} className="morphoKey">Z</button>
-            <button key="keyX" onClick={() => {handleInputLetter('X');}} className="morphoKey">X</button>
-            <button key="keyC" onClick={() => {handleInputLetter('C');}} className="morphoKey">C</button>
-            <button key="keyV" onClick={() => {handleInputLetter('V');}} className="morphoKey">V</button>
-            <button key="keyB" onClick={() => {handleInputLetter('B');}} className="morphoKey">B</button>
-            <button key="keyN" onClick={() => {handleInputLetter('N');}} className="morphoKey">N</button>
-            <button key="keyM" onClick={() => {handleInputLetter('M');}} className="morphoKey">M</button>
-        </div> */}
-                    <div className="morphoKeyrow4">
-                        <button key="keyCopydown" onClick={() => { copyDownLetter(); } } className="morphoCopydownKey">COPY DOWN</button>
-                        <button key="keyCopyup" onClick={() => { copyUpLetter(); } } className="morphoCopyupKey">COPY UP</button>
-                    </div>
-                    {!puzzleSolved && filledin && <div className="morphoKeyrow4">
-                        <button className="trButton" onClick={() => { checkSolution(); } }>
-                            SUBMIT YOUR SOLUTION
-                        </button>
-                    </div>}
-                </div>
-                <p>Change one letter at a time to get from {firstWord} to {lastWord}.
-                    Each interim word must be a valid word.</p>
-                <p>COPY DOWN copies a letter down from the row above.
-                    COPY UP copies a letter up from the bottom row.</p>
-                <p>Click a letter on the bottom row to use it as the swap on the selected row.</p>
+            {!loading && !checking && !puzzleSolved && filledin && <div className='trParagraph'>
+                <button className="trButton" onClick={() => { checkSolution(); } }>
+                    SUBMIT SOLUTION
+                </button>
             </div>}
             {puzzleSolved ?
-                <div>
-                    <h3 className="trEmphasis">Success!</h3>
-                    {promptForPuzzleGeneration}
-                </div>
+                promptForPuzzleGeneration
                 :
-                <button className="trButton" onClick={() => { toggleShowSolution(); } }>
-                    {`${showSolution ? 'HIDE SOLUTION' : 'SHOW A SOLUTION'}`}
-                </button>}
+                <div className='trParagraph'>
+                    <button className="trButton" onClick={() => { toggleShowSolution(); } }>
+                        {`${showSolution ? 'HIDE SOLUTION' : 'SHOW A SOLUTION'}`}
+                    </button>
+                </div>}
         </div>
     </div>;
 
     return (
         <div className="trBackground">
-            <div className="trTitle">
-                Morpho
+            <div className='toprow'>
                 <button className="trButton" onClick={() => {setWhereTo('home');}}>
                     <i className="material-icons" data-toggle="tooltip" title="Home">home</i>
                 </button>
+                {!loading && !checking && !puzzleSolved &&
+                    <button className='trButton' onClick={() => {setGuide(!guide);}}>
+                        {guide ? 'Hide guide' : 'Show guide'}
+                    </button>}
             </div>
+            {!loading && !checking && !puzzleSolved && guide && showGuide}
             {starting ?
                 promptForPuzzleGeneration
             :
             loading ?
-                <div key="pleasewait" className="trEmphasis">Creating puzzle, please be patient...</div>
+                <div key="pleasewait" className="trEmphasis">Waking up the puzzle maker, hang on...</div>
             :
                 renderThePuzzle
             }

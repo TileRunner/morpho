@@ -1,5 +1,9 @@
 .App-logo {
-  height: 40vmin;
+  height: 30vh;
+  pointer-events: none;
+}
+.App-logo-small {
+  height: 15vh;
   pointer-events: none;
 }
 .App-under-logo {
@@ -18,15 +22,18 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+  .App-logo-small {
+    animation: App-logo-spin infinite 10s linear alternate;
+  }
 }
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  height: 50vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   font-size: calc(10px + 2vmin);
   color: white;
 }
