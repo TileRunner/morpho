@@ -1,4 +1,7 @@
-const baseurl = 'https://tilerunner.herokuapp.com';
+/* Due to heroku's security issue, they prevented my deploys to tilerunner.
+   They suggested using heroku CLI, so I followed instructions and it worked, but to a new url.
+*/
+const baseurl = 'https://enigmatic-lake-42795.herokuapp.com'; //'https://tilerunner.herokuapp.com';
 
 /**
  * Determine how many swaps between two words of equal length, case insensitive.
