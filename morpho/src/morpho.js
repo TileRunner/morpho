@@ -9,7 +9,7 @@ const Morpho = ({setWhereTo}) => {
     const [numRows, setNumRows] = useState(6);
     const [numCols, setNumCols] = useState(5);
     const [nextNumCols, setNextNumCols] = useState(5);
-    const baseurl = 'https://tilerunner.herokuapp.com';
+    const baseurl = (process.env.NODE_ENV === 'production' ? 'https://webappscrabbleclub.azurewebsites.net/api/Values' : 'https://localhost:55557/api/Values');
     const cssPresetLetter = "morphoCellStatic";
     const cssNoLetter = "morphoCellNoLetter";
     const cssSelectedCell = " morphoCellSelected";
@@ -28,11 +28,16 @@ const Morpho = ({setWhereTo}) => {
     const callForPuzzle = async(wordLength) => {
         let data = {};
         try {
-            let url = `${baseurl}/ENABLE2K?morpho=true&len=${wordLength}`;
+            let url = `${baseurl}/morpho?rows=${wordLength+1}&cols=${wordLength}`;
             const response = await fetch(url);
-            data = await response.json();                
+            let json = await response.json();
+            if (json.value.fail) {
+                data.notes = ['The cat had a hairball!', json.value.fail];
+            } else {
+                data.puzzle = json.value;
+            }
         } catch (error) {
-            data.notes = "Problem with the server. Sorry about that.";
+            data.notes = "The cat escaped. Sorry about that.";
             console.log(error);
         }
         return data;
@@ -47,10 +52,10 @@ const Morpho = ({setWhereTo}) => {
         let rowArray = [];
         const data = await callForPuzzle(wordLength);
         if (!data.notes || data.notes.length === 0) { // Ok result
-            let numberOfRows = data.numRows;
-            let numberOfCols = data.numCols;
+            let numberOfRows = data.puzzle.numRows;
+            let numberOfCols = data.puzzle.numCols;
             for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex++) {
-                const rowWord = data.puzzle[rowIndex].toUpperCase();
+                const rowWord = data.puzzle.rows[rowIndex].letters.toUpperCase();
                 if (rowIndex === 0) {
                     setFirstWord(rowWord);
                 } else if (rowIndex === numberOfRows - 1) {
@@ -78,7 +83,7 @@ const Morpho = ({setWhereTo}) => {
             setSelected({row:1});
             setLoading(false);
         } else {
-            alert(`Problem generating puzzle: ${data.notes}\nBest to click Home then rechoose Morpho.`);
+            alert(`Problem generating puzzle: ${data.notes.join(' ... ')}\nBest to click Home then retry.`);
         }
     }
 
@@ -159,6 +164,7 @@ const Morpho = ({setWhereTo}) => {
             <button className="trButton" onClick={() => {setInitialBoard(nextNumCols);}}>
                 START PUZZLE
             </button>
+            {nextNumCols > 6 && <p className='trWarning'>The cat gets hairballs on large puzzles</p>}
         </div>
     </div>;
 
@@ -218,7 +224,7 @@ const Morpho = ({setWhereTo}) => {
                 promptForPuzzleGeneration
             :
             loading ?
-                <div key="pleasewait" className="trEmphasis">Waking up the puzzle maker, hang on...</div>
+                <div key="pleasewait" className="trEmphasis">Feeding the cat, hang on...</div>
             :
                 renderThePuzzle
             }

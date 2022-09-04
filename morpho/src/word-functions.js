@@ -1,7 +1,4 @@
-/* Due to heroku's security issue, they prevented my deploys to tilerunner.
-   They suggested using heroku CLI, so I followed instructions and it worked, but to a new url.
-*/
-const baseurl = 'https://enigmatic-lake-42795.herokuapp.com'; //'https://tilerunner.herokuapp.com';
+const baseurl = (process.env.NODE_ENV === 'production' ? 'https://webappscrabbleclub.azurewebsites.net/api/Values' : 'https://localhost:55557/api/Values');
 
 /**
  * Determine how many swaps between two words of equal length, case insensitive.
@@ -15,7 +12,6 @@ const baseurl = 'https://enigmatic-lake-42795.herokuapp.com'; //'https://tilerun
     let letters2 = Array.from(word2.toLowerCase());
     if (letters1.length === letters2.length) {
         for (let i = 0; i < letters1.length; i++) {
-            const l1 = letters1[i];
             if (letters1[i] !== letters2[i]) {
                 result++;
             }
@@ -33,8 +29,8 @@ const baseurl = 'https://enigmatic-lake-42795.herokuapp.com'; //'https://tilerun
  * @async
  */
  export async function isWordValid(word) {
-    let url = `${baseurl}/ENABLE2K?exists=${word.toLowerCase()}`;
+    let url = `${baseurl}/ENABLE2K/exists?word=${word}`;
     const response = await fetch(url);
     const jdata = await response.json();
-    return jdata.exists;
+    return jdata.value;
 }
