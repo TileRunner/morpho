@@ -164,7 +164,7 @@ const Morpho = ({setWhereTo}) => {
             <button className="trButton" onClick={() => {setInitialBoard(nextNumCols);}}>
                 START PUZZLE
             </button>
-            {nextNumCols > 6 && <p className='trWarning'>The cat gets hairballs on large puzzles</p>}
+            {nextNumCols > 7 && <p className='trWarning'>The cat gets hairballs on large puzzles</p>}
         </div>
     </div>;
 
