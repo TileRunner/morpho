@@ -7,6 +7,7 @@ import './tr.css';
 import { useState } from 'react';
 import Morpho from './morpho';
 import {isMobile} from 'react-device-detect';
+import ReactPlayer from 'react-player';
 
 function App() {
   const [whereTo, setWhereTo] = useState('home');
@@ -23,6 +24,7 @@ function App() {
             <p>Swap one letter at a time to morph to target.</p>
             <button onClick={() => {setWhereTo('game');}}>Play !</button>
           </div>
+          <ReactPlayer url='https://youtu.be/jEBpZM5CeZ0'/>
         </header>
       :
         <header>

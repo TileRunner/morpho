@@ -37,7 +37,7 @@ const Morpho = ({setWhereTo}) => {
                 data.puzzle = json.value;
             }
         } catch (error) {
-            data.notes = "The cat escaped. Sorry about that.";
+            data.notes = ["The cat escaped. Sorry about that."];
             console.log(error);
         }
         return data;
