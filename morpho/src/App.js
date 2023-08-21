@@ -32,11 +32,11 @@ function App() {
                 </div>
               </td>
             </tr>
-            <tr>
+            {/* <tr>
               <td>
                 <h3>NWL20 lexicon used with permission from NASPA <a href='https://www.scrabbleplayers.org/landing/tilerunner'>Visit NASPA</a></h3>
               </td>
-            </tr>
+            </tr> */}
           </table>
         </header>
       :
