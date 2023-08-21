@@ -23,13 +23,13 @@ const baseurl = (process.env.NODE_ENV === 'production' ? 'https://webappscrabble
 }
 
 /**
- * Determine whether a word is in the ENABLE2K lexicon, case insensitive
+ * Determine whether a word is in the NWL2020 lexicon, case insensitive
  * @param {string} word A word
- * @returns {Promise<boolean>} Whether the word is in the ENABLE2K lexicon
+ * @returns {Promise<boolean>} Whether the word is in the NWL2020 lexicon
  * @async
  */
  export async function isWordValid(word) {
-    let url = `${baseurl}/ENABLE2K/exists?word=${word}`;
+    let url = `${baseurl}/NWL2020/exists?word=${word}`;
     const response = await fetch(url);
     const jdata = await response.json();
     return jdata.value;
