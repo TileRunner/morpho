@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/morpho/static/css/main.651583ab.css",
-    "main.js": "/morpho/static/js/main.1d57b8bb.js",
+    "main.js": "/morpho/static/js/main.719ad3d0.js",
     "static/media/MorphoButterfly.png": "/morpho/static/media/MorphoButterfly.116161befe8d065ed0e6.png",
     "static/media/MorphoCaterpillar.png": "/morpho/static/media/MorphoCaterpillar.a18bb4ff8007ef7f3e37.png",
     "static/media/MorphoCocoon.png": "/morpho/static/media/MorphoCocoon.21f111323d8d00aa4e11.png",
     "index.html": "/morpho/index.html",
     "main.651583ab.css.map": "/morpho/static/css/main.651583ab.css.map",
-    "main.1d57b8bb.js.map": "/morpho/static/js/main.1d57b8bb.js.map"
+    "main.719ad3d0.js.map": "/morpho/static/js/main.719ad3d0.js.map"
   },
   "entrypoints": [
     "static/css/main.651583ab.css",
-    "static/js/main.1d57b8bb.js"
+    "static/js/main.719ad3d0.js"
   ]
 }
